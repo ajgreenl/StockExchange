@@ -24,7 +24,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
-app.MapGet("/api/stocks/{symbols}", async (string symbol, IHttpClientFactory httpClientFactory) => 
+app.MapGet("/api/stocks/{symbol}", async (string symbol, IHttpClientFactory httpClientFactory) => 
 {
     var stockClient =  httpClientFactory.CreateClient("YahooFinance");
 try{
@@ -35,9 +35,8 @@ try{
             return Results.Problem($"Yahoo Finance returned probelm {response.StatusCode}, statuscode: (int)response.StatusCode");
         }
 
-        var content = await response.Content.ReadAsStringAsync();
-
-        using var json = JsonDocument.Parse(content);
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        using var json = await JsonDocument.ParseAsync(stream);
 
         var root = json.RootElement;
 
@@ -56,13 +55,14 @@ try{
             return Results.NotFound(new { message = $"No timestamp data found for symbol '{symbol}'." });
         }
 
-        var timestamps = timestampsElement.EnumerateArray().ToList();
+       
 
         var dailyData = new Dictionary<DateOnly, (List<double> lows,
                                           List<double> highs,
                                           long volume)>();
 
-        for (int i = 0; i < timestamps.Count; i++)
+        var i = 0;
+        foreach ( var tsElement in timestampsElement.EnumerateArray())
         {
             // Skip missing Yahoo Finance values
             if (lows[i].ValueKind == JsonValueKind.Null || highs[i].ValueKind == JsonValueKind.Null ||
@@ -70,7 +70,7 @@ try{
             continue;
         }
 
-        long unixTime = timestamps[i].GetInt64();
+        long unixTime = tsElement.GetInt64();
 
         var date = DateTimeOffset.FromUnixTimeSeconds(unixTime).UtcDateTime;
         
@@ -96,7 +96,7 @@ try{
         dailyData[day].highs,
         dailyData[day].volume + volume
         );
-
+        i++;
         }
         
         
