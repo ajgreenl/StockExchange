@@ -1,0 +1,6 @@
+@StockExchange_Prometheous_Group_Assessment__HostAddress = http://localhost:5234
+
+GET {{StockExchange_Prometheous_Group_Assessment__HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
