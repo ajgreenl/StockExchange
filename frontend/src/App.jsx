@@ -4,7 +4,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
 
-function App() {
+async function App() {
   const [symbol, setSymbol] = useState("");
   const [stockData, setStockData] = useState([]);
   const [error, setError] = useState("");
@@ -16,114 +16,77 @@ function App() {
       return;
     }
   }
+
+  setLoading(true);
+  setError("");
+  setStockData([]);
+  
+  try {
+    const response = await fetch(
+      'https://localhost:7000/api/stocks/${symbol.trim().toUpperCase()}'
+    );
+
+    if(!response.ok) {
+      throw new Error("Stock symbol could not be found.");
+    }
+    const data = await response.json();
+    setStockData(data);
+   } catch(error){
+    setError(error.message);
+   } finally {
+    setLoading(false);
+   }
+  
+
   return (
     <>
-      <section id="center">
         <div className="app">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+          <h1>Stock Data</h1>
 
-      <div className="ticks"></div>
+          <div className="search">
+            <input 
+            type="text"
+            placeholder="Enter Stock symbol."
+            value={symbol}
+            onChange= {(event) => setSymmbol(event.target.value)}
+          />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          <button onClick={searchStock}>
+            Search
+          </button>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {loading && <p> Loading stock data...</p>}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+        {error && <p className="error">{error}</p>}
+
+        {stockData.length > 0 && (
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Day</th>
+                <th>Low Average</th>
+                <th>High Average</th>
+                <th>Volume</th>
+              </tr>
+
+            </thead>
+
+          <tbody>
+            {stockData.map((stock) => (
+              <tr key={stock.day}>
+                <td>{stock.day}</td>
+                <td>{stock.lowAverage.toFixed(4)}</td>
+                <td>{stock.highAverage.toFixed(4)}</td>
+                <td>{stock.volume.toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+          </table>
+        )}
+        </div>
+        
     </>
   )
 }

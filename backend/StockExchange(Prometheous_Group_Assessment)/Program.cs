@@ -1,6 +1,5 @@
 using System.Text.Json;
-using System.Globalization;
-using System.Text.Json.Nodes;
+
  
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +12,19 @@ builder.Services.AddHttpClient("YahooFinance", client =>
     client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0");
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactApp", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
+app.UseCors("ReactApp");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
