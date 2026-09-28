@@ -88,11 +88,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\backend\\StockExchange(Prometheous_Group_Assessment).csproj",
+      "projectUniqueName": "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\StockExchange(Prometheous_Group_Assessment).csproj",
       "projectName": "StockExchange(Prometheous_Group_Assessment)",
-      "projectPath": "c:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\backend\\StockExchange(Prometheous_Group_Assessment).csproj",
+      "projectPath": "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\StockExchange(Prometheous_Group_Assessment).csproj",
       "packagesPath": "C:\\Users\\anton\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\backend\\obj\\",
+      "outputPath": "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\anton\\AppData\\Roaming\\NuGet\\NuGet.Config"
