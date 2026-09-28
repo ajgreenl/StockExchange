@@ -1,20 +1,19 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
 import './App.css'
 
-async function App() {
+function App() {
   const [symbol, setSymbol] = useState("");
   const [stockData, setStockData] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const searchStock = async () => {
-    if(!symbol.trim()){
-      setError("Please enter a correct stock symbol.");
-      return;
-    }
+    const formattedSymbol = symbol.trim().toUpperCase();
+
+  // 2. Validate it
+  if (!formattedSymbol) {
+    setError("Please enter a stock symbol.");
+    return;
   }
 
   setLoading(true);
@@ -22,9 +21,8 @@ async function App() {
   setStockData([]);
   
   try {
-    const response = await fetch(
-      'https://localhost:7000/api/stocks/${symbol.trim().toUpperCase()}'
-    );
+   const response = await fetch(`http://localhost:5234/api/stocks/${formattedSymbol}`);
+      
 
     if(!response.ok) {
       throw new Error("Stock symbol could not be found.");
@@ -37,7 +35,7 @@ async function App() {
     setLoading(false);
    }
   
-
+  }
   return (
     <>
         <div className="app">
@@ -48,7 +46,7 @@ async function App() {
             type="text"
             placeholder="Enter Stock symbol."
             value={symbol}
-            onChange= {(event) => setSymmbol(event.target.value)}
+            onChange= {(event) => setSymbol(event.target.value)}
           />
 
           <button onClick={searchStock}>

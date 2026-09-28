@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\StockExchange(Prometheous_Group_Assessment)\\StockExchange(Prometheous_Group_Assessment).csproj": {}
+    "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\backend\\StockExchange(Prometheous_Group_Assessment).csproj": {}
   },
   "projects": {
-    "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\StockExchange(Prometheous_Group_Assessment)\\StockExchange(Prometheous_Group_Assessment).csproj": {
+    "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\backend\\StockExchange(Prometheous_Group_Assessment).csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\StockExchange(Prometheous_Group_Assessment)\\StockExchange(Prometheous_Group_Assessment).csproj",
+        "projectUniqueName": "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\backend\\StockExchange(Prometheous_Group_Assessment).csproj",
         "projectName": "StockExchange(Prometheous_Group_Assessment)",
-        "projectPath": "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\StockExchange(Prometheous_Group_Assessment)\\StockExchange(Prometheous_Group_Assessment).csproj",
+        "projectPath": "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\backend\\StockExchange(Prometheous_Group_Assessment).csproj",
         "packagesPath": "C:\\Users\\anton\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\StockExchange(Prometheous_Group_Assessment)\\obj\\",
+        "outputPath": "C:\\Users\\anton\\OneDrive\\Documents\\GitHub\\GameJam2026Copy\\StockExchange\\backend\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\anton\\AppData\\Roaming\\NuGet\\NuGet.Config"

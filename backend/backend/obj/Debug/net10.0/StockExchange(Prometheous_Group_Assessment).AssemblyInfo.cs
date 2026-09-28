@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("StockExchange(Prometheous_Group_Assessment)")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2aa6d5c1292f1c3918447c8230b1f061c351a2e6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6289982e697ae690ba0a574ab67f8a75ea7006ba")]
 [assembly: System.Reflection.AssemblyProductAttribute("StockExchange(Prometheous_Group_Assessment)")]
 [assembly: System.Reflection.AssemblyTitleAttribute("StockExchange(Prometheous_Group_Assessment)")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
