@@ -38,12 +38,28 @@ app.MapGet("/api/stocks/{symbol}", async (string symbol, IHttpClientFactory http
 {
     var stockClient =  httpClientFactory.CreateClient("YahooFinance");
 try{
-    var response = await stockClient.GetAsync($"/v8/finance/chart/{symbol}?range=1mo&interval=15m");
 
-        if (!response.IsSuccessStatusCode)
+     symbol = symbol.Trim();
+
+        var encodedSymbol = Uri.EscapeDataString(symbol);
+
+        var response = await stockClient.GetAsync(
+            $"/v8/finance/chart/{encodedSymbol}?range=1mo&interval=15m"
+        );
+
+        if (!response.IsSuccessStatusCode){
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound){
+                return Results.NotFound(new
         {
-            return Results.Problem($"Yahoo Finance returned probelm {response.StatusCode}, statuscode: (int)response.StatusCode");
-        }
+            message = $"Stock symbol '{symbol}' was not found."
+        });
+    }
+
+    return Results.Problem(
+        $"Yahoo Finance returned an error: {response.StatusCode}",
+        statusCode: (int)response.StatusCode
+    );
+}
 
         await using var stream = await response.Content.ReadAsStreamAsync();
         using var json = await JsonDocument.ParseAsync(stream);
@@ -74,11 +90,15 @@ try{
         var i = 0;
         foreach ( var tsElement in timestampsElement.EnumerateArray())
         {
-            // Skip missing Yahoo Finance values
-            if (lows[i].ValueKind == JsonValueKind.Null || highs[i].ValueKind == JsonValueKind.Null ||
-                volumes[i].ValueKind == JsonValueKind.Null) {
+            var currentIndex = i;
+            i++;
+
+            if (lows[currentIndex].ValueKind == JsonValueKind.Null || highs[currentIndex].ValueKind == JsonValueKind.Null ||
+                volumes[currentIndex].ValueKind == JsonValueKind.Null) {
             continue;
         }
+
+
 
         long unixTime = tsElement.GetInt64();
 
@@ -86,9 +106,9 @@ try{
         
         var day = DateOnly.FromDateTime(date);
 
-        double low = lows[i].GetDouble();
-        double high = highs[i].GetDouble();
-        long volume = volumes[i].GetInt64();
+        double low = lows[currentIndex].GetDouble();
+        double high = highs[currentIndex].GetDouble();
+        long volume = volumes[currentIndex].GetInt64();
 
         if (!dailyData.ContainsKey(day)){
             dailyData[day] = (
@@ -106,13 +126,13 @@ try{
         dailyData[day].highs,
         dailyData[day].volume + volume
         );
-        i++;
+        
         }
         
         
         foreach (var day in dailyData) {
-            double lowAverage = day.Value.lows.Average();
-            double highAverage = day.Value.highs.Average();
+            double lowAverage = Math.Round(day.Value.lows.Average(), 4);
+            double highAverage = Math.Round(day.Value.highs.Average(), 4);
 
             stocks.Add(
             new StockDay(
@@ -127,7 +147,7 @@ try{
     
     catch(HttpRequestException ex)
     {
-        return Results.Problem(ex.Message, statusCode: 500);
+        return Results.Problem(ex.Message, statusCode: 404);
     }
 });
 

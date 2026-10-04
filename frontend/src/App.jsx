@@ -25,7 +25,7 @@ function App() {
       
 
     if(!response.ok) {
-      throw new Error("Stock symbol could not be found.");
+      throw new Error("Error 404 stock symbol could not be found.");
     }
     const data = await response.json();
     setStockData(data);
