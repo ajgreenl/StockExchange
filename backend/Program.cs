@@ -3,6 +3,7 @@ using System.Text.Json;
  
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -33,61 +34,113 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+ 
 
-app.MapGet("/api/stocks/{symbol}", async (string symbol, IHttpClientFactory httpClientFactory) => 
+app.MapGet("/api/stocks/{symbol}", async (
+    string symbol,
+    IHttpClientFactory httpClientFactory) =>
 {
-    var stockClient =  httpClientFactory.CreateClient("YahooFinance");
-try{
+    var stockClient = httpClientFactory.CreateClient("YahooFinance");
 
-     symbol = symbol.Trim();
+    try
+    {
 
+        symbol = symbol.Trim();
+
+        // Encode the symbol for the URL
         var encodedSymbol = Uri.EscapeDataString(symbol);
 
         var response = await stockClient.GetAsync(
             $"/v8/finance/chart/{encodedSymbol}?range=1mo&interval=15m"
         );
 
-        if (!response.IsSuccessStatusCode){
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound){
-                return Results.NotFound(new
+        // Handle HTTP errors from Yahoo Finance
+        if (!response.IsSuccessStatusCode)
         {
-            message = $"Stock symbol '{symbol}' was not found."
-        });
-    }
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return Results.NotFound(new
+                {
+                    message = $"Stock symbol '{symbol}' was not found."
+                });
+            }
 
-    return Results.Problem(
-        $"Yahoo Finance returned an error: {response.StatusCode}",
-        statusCode: (int)response.StatusCode
-    );
-}
+            return Results.Problem(
+                $"Yahoo Finance returned an error: {response.StatusCode}",
+                statusCode: (int)response.StatusCode
+            );
+        }
 
-        await using var stream = await response.Content.ReadAsStreamAsync();
-        using var json = await JsonDocument.ParseAsync(stream);
+        // Read Yahoo Finance JSON
+        await using var stream =
+            await response.Content.ReadAsStreamAsync();
+
+        using var json =
+            await JsonDocument.ParseAsync(stream);
 
         var root = json.RootElement;
 
-        // You will build StockDay objects here.
-        var stocks = new List<StockDay>();
+        var chart = root.GetProperty("chart");
 
-        var result = root.GetProperty("chart").GetProperty("result")[0];
+        // Yahoo can return a successful HTTP response
+        // with a null result for an invalid symbol.
+        if (chart.GetProperty("result").ValueKind ==
+            JsonValueKind.Null)
+        {
+            return Results.NotFound(new
+            {
+                message = $"Stock symbol '{symbol}' was not found."
+            });
+        }
 
-        var quote = result.GetProperty("indicators").GetProperty("quote")[0];
+        var result = chart.GetProperty("result")[0];
+
+        var quote = result
+            .GetProperty("indicators")
+            .GetProperty("quote")[0];
+
         var lows = quote.GetProperty("low");
         var highs = quote.GetProperty("high");
         var volumes = quote.GetProperty("volume");
 
-        if (!result.TryGetProperty("timestamp", out var timestampsElement))
+        if (!result.TryGetProperty(
+                "timestamp",
+                out var timestampsElement))
         {
-            return Results.NotFound(new { message = $"No timestamp data found for symbol '{symbol}'." });
+            return Results.NotFound(new
+            {
+                message =
+                    $"No timestamp data found for symbol '{symbol}'."
+            });
         }
 
-       
+        // Calculate the daily stock information.
+        var stocks = CalculateDailyData(
+            timestampsElement,
+            lows,
+            highs,
+            volumes
+        );
 
-        var dailyData = new Dictionary<DateOnly, (List<double> lows,
-                                          List<double> highs,
-                                          long volume)>();
+        return Results.Ok(stocks);
+    }
+    catch (HttpRequestException ex)
+    {
+        return Results.Problem(ex.Message, statusCode: 404);
+    }
+});
 
-        var i = 0;
+
+app.Run();
+public partial class Program
+{
+   public static List<StockDay> CalculateDailyData(JsonElement timestampsElement, JsonElement lows, JsonElement highs, JsonElement volumes)
+{
+    var stocks = new List<StockDay>();
+
+    var dailyData = new Dictionary<DateOnly, (List<double> lows, List<double> highs, long volume)>();
+
+    var i = 0;
         foreach ( var tsElement in timestampsElement.EnumerateArray())
         {
             var currentIndex = i;
@@ -142,21 +195,14 @@ try{
                 day.Value.volume
             ));
         }
-        return Results.Ok(stocks);
-        }
-    
-    catch(HttpRequestException ex)
-    {
-        return Results.Problem(ex.Message, statusCode: 404);
-    }
-});
+        return stocks;
 
-
-app.Run();
-
-record StockDay(
+}
+}
+public record StockDay(
     string Day,
     double LowAverage,
     double HighAverage,
     long Volume
 );
+

@@ -39,3 +39,22 @@ back to faild fetch notification in the chrome browser
 hey is this a good readme to show how to run my stock exhange program the pasted readMe
     wanted to make the read me both more concise legible and structured
     I changed the intro/requirements section and then typed the rest on a doc then pasted it
+
+Second AI-log
+
+For the Second AI log I called on the ai to make the unit test as well as error checking  for my unit testing problemsa nd finally git ignore to make sure I was not fogetting anything to be ignored in git hub.
+
+How would you go about unit testing for daily calculation
+    I wanted a basic unit test that I could modify to fit the packets requirements
+    I changed the tests so that both a basic test would tests for the decimal requirement and copied the first test and added null in the contents of the calculations to check for empty intervals.
+
+this is the error given The name 'Program' does not exist in the current context how do i fix in unitt test
+    I wanted to find out potential reasons as to why the unit Tests dindt have access to the Assert functions
+    used both quik fix and went inot the test csproj and changed how it was accessed
+
+is this the complete git ignore
+    I pasted my gitignore after displaying after inputting what was asked
+    changed the obj and node_modules asbin because I forgot to add indicators that they are in lower folders.
+
+
+

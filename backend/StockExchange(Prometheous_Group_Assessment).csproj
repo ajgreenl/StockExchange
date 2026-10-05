@@ -11,4 +11,10 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="StockExchange.Tests\**" />
+    <Content Remove="StockExchange.Tests\**" />
+    <None Remove="StockExchange.Tests\**" />
+</ItemGroup>
+
 </Project>
